@@ -1,0 +1,125 @@
+services:
+
+  # ======================================================
+  # LARAVEL APP
+  # ======================================================
+  laravel:
+    build:
+      context: ./backend-laravel
+      dockerfile: Dockerfile
+    container_name: laravel-app
+    restart: unless-stopped
+
+    ports:
+      - "8000:80"
+      - "5173:5173"   # Vite dev server (Tailwind)
+
+    volumes:
+      - ./backend-laravel:/var/www/html
+      - laravel_node_modules:/var/www/html/node_modules
+
+    depends_on:
+      - mysql
+      - ml
+
+    environment:
+      DB_CONNECTION: mysql
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: penjualan_db
+      DB_USERNAME: laravel
+      DB_PASSWORD: laravel
+
+    networks:
+      - app-network
+
+
+  # ======================================================
+  # ML SERVICE (PYTHON)
+  # ======================================================
+  ml:
+    build:
+      context: ./ml-service
+      dockerfile: Dockerfile
+    container_name: ml-service
+    restart: unless-stopped
+
+    ports:
+      - "5000:5000"
+
+    volumes:
+      - ./ml-service:/app
+
+    environment:
+      DB_HOST: mysql
+      DB_USER: laravel
+      DB_PASS: laravel
+      DB_NAME: penjualan_db
+
+    networks:
+      - app-network
+
+
+  # ======================================================
+  # MYSQL DATABASE
+  # ======================================================
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-db
+    restart: unless-stopped
+
+    ports:
+      - "3307:3306"
+
+    environment:
+      MYSQL_DATABASE: penjualan_db
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: laravel
+      MYSQL_PASSWORD: laravel
+
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+    networks:
+      - app-network
+
+
+  # ======================================================
+  # PHPMYADMIN (OPTIONAL BUT RECOMMENDED)
+  # ======================================================
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    restart: unless-stopped
+
+    ports:
+      - "8080:80"
+
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: laravel
+      PMA_PASSWORD: laravel
+
+    depends_on:
+      - mysql
+
+    networks:
+      - app-network
+
+
+# ======================================================
+# VOLUMES
+# ======================================================
+volumes:
+
+  mysql_data:
+
+  laravel_node_modules:
+
+
+# ======================================================
+# NETWORK
+# ======================================================
+networks:
+  app-network:
+    driver: bridge

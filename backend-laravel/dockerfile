@@ -1,0 +1,78 @@
+FROM php:8.4-apache
+
+# ======================================================
+# INSTALL SYSTEM DEPENDENCIES
+# ======================================================
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
+    unzip \
+    zip \
+    libpng-dev \
+    libjpeg62-turbo-dev \
+    libfreetype6-dev \
+    libonig-dev \
+    libxml2-dev \
+    libzip-dev \
+    nodejs \
+    npm \
+    && docker-php-ext-configure gd \
+        --with-freetype \
+        --with-jpeg \
+    && docker-php-ext-install \
+        pdo \
+        pdo_mysql \
+        mbstring \
+        bcmath \
+        exif \
+        pcntl \
+        zip \
+        gd
+
+# ======================================================
+# INSTALL COMPOSER
+# ======================================================
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# ======================================================
+# ENABLE APACHE REWRITE
+# ======================================================
+RUN a2enmod rewrite
+
+# ======================================================
+# SET DOCUMENT ROOT
+# ======================================================
+ENV APACHE_DOCUMENT_ROOT /var/www/html/public
+
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' \
+    /etc/apache2/sites-available/*.conf \
+    /etc/apache2/apache2.conf \
+    /etc/apache2/conf-available/*.conf
+
+# ======================================================
+# SET WORKDIR
+# ======================================================
+WORKDIR /var/www/html
+
+# ======================================================
+# COPY PROJECT
+# ======================================================
+COPY . .
+
+# ======================================================
+# INSTALL DEPENDENCIES
+# ======================================================
+RUN composer install --no-interaction --optimize-autoloader --no-dev
+
+# ======================================================
+# INSTALL & BUILD FRONTEND
+# ======================================================
+RUN npm install && npm run build
+
+# ======================================================
+# PERMISSION
+# ======================================================
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 755 /var/www/html
+
+EXPOSE 80

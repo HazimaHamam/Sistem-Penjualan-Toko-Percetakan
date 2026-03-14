@@ -1,0 +1,8 @@
+flask
+numpy
+pandas
+scikit-learn==1.7.0
+joblib
+pymysql
+sqlalchemy
+cryptography

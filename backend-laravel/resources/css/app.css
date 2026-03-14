@@ -1,0 +1,247 @@
+@import 'tailwindcss';
+
+/* ── @source: jangan dihapus — Tailwind v4 butuh ini
+   untuk scan class di semua blade/js file ── */
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+/* ════════════════════════════════════════════════════════
+   DESIGN TOKENS
+   Daftarkan di @theme agar otomatis jadi Tailwind class:
+   bg-navy, text-gold, bg-ivory-2, font-display, dst.
+════════════════════════════════════════════════════════ */
+@theme {
+    /* ── Font (ganti Instrument Sans dengan DM Sans + Playfair) ── */
+    --font-sans:    'DM Sans', ui-sans-serif, system-ui, sans-serif,
+                    'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-display: 'Playfair Display', Georgia, ui-serif, serif;
+
+    /* ── Warna Brand ── */
+    --color-ivory:      #faf7f2;
+    --color-ivory-2:    #f2ede4;
+    --color-ivory-3:    #e8e0d4;
+    --color-navy:       #12111a;
+    --color-navy-2:     #1e1d2e;
+    --color-navy-soft:  #3d3c52;
+    --color-gold:       #c9820a;
+    --color-gold-2:     #e8a020;
+    --color-gold-pale:  #fdf3e0;
+    --color-ink:        #2a2825;
+    --color-ink-soft:   #6b6660;
+    --color-ink-muted:  #a09b94;
+}
+
+/* ════════════════════════════════════════════════════════
+   CSS CUSTOM PROPERTIES (untuk dipakai di custom CSS,
+   calc(), rgba(), dan komponen non-Tailwind)
+════════════════════════════════════════════════════════ */
+:root {
+    --ivory:      #faf7f2;
+    --ivory-2:    #f2ede4;
+    --ivory-3:    #e8e0d4;
+    --navy:       #12111a;
+    --navy-2:     #1e1d2e;
+    --navy-soft:  #3d3c52;
+    --gold:       #c9820a;
+    --gold-2:     #e8a020;
+    --gold-pale:  #fdf3e0;
+    --ink:        #2a2825;
+    --ink-soft:   #6b6660;
+    --ink-muted:  #a09b94;
+    --white:      #ffffff;
+    --border:     rgba(42,40,37,0.1);
+    --radius-card: 18px;
+}
+
+/* ════════════════════════════════════════════════════════
+   BASE OVERRIDES
+════════════════════════════════════════════════════════ */
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background-color: var(--ivory);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* ════════════════════════════════════════════════════════
+   KEYFRAMES
+════════════════════════════════════════════════════════ */
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+@keyframes slideRight {
+    from { opacity: 0; transform: translateX(-20px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-8px); }
+}
+@keyframes marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+}
+@keyframes flashIn {
+    from { opacity: 0; transform: translateX(20px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ════════════════════════════════════════════════════════
+   SCROLL ANIMATION CLASSES
+   Dikontrol IntersectionObserver — .visible ditambahkan JS
+════════════════════════════════════════════════════════ */
+.anim-up,
+.anim-in,
+.anim-r { opacity: 0; }
+
+.anim-up.visible { animation: fadeUp     0.7s cubic-bezier(.16,1,.3,1) forwards; }
+.anim-in.visible { animation: fadeIn     0.6s ease forwards; }
+.anim-r.visible  { animation: slideRight 0.6s cubic-bezier(.16,1,.3,1) forwards; }
+
+.d1 { animation-delay: .05s; } .d2 { animation-delay: .13s; }
+.d3 { animation-delay: .21s; } .d4 { animation-delay: .29s; }
+.d5 { animation-delay: .37s; } .d6 { animation-delay: .45s; }
+
+/* ════════════════════════════════════════════════════════
+   TYPOGRAPHY UTILITIES
+════════════════════════════════════════════════════════ */
+
+/* Eyebrow label — dipakai di semua section heading */
+.eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1rem;
+}
+.eyebrow::before {
+    content: '';
+    display: block;
+    width: 24px;
+    height: 1.5px;
+    background: var(--gold);
+    flex-shrink: 0;
+}
+
+/* ════════════════════════════════════════════════════════
+   BUTTON COMPONENTS
+   @layer components agar bisa di-override Tailwind utilities
+════════════════════════════════════════════════════════ */
+@layer components {
+    .btn-gold {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.875rem 2rem;
+        background-color: var(--gold);
+        color: #fff;
+        font-weight: 600;
+        font-size: 0.9rem;
+        border-radius: 10px;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+        transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+        box-shadow: 0 6px 24px rgba(201,130,10,.35);
+    }
+    .btn-gold:hover {
+        background-color: #b8720a;
+        transform: translateY(-2px);
+        box-shadow: 0 12px 32px rgba(201,130,10,.4);
+    }
+
+    .btn-outline-light {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.875rem 2rem;
+        border: 1.5px solid rgba(255,255,255,.2);
+        color: rgba(255,255,255,.8);
+        font-weight: 500;
+        font-size: 0.9rem;
+        border-radius: 10px;
+        text-decoration: none;
+        background: rgba(255,255,255,.05);
+        backdrop-filter: blur(8px);
+        transition: background 0.2s, border-color 0.2s, color 0.2s;
+    }
+    .btn-outline-light:hover {
+        background: rgba(255,255,255,.12);
+        border-color: rgba(255,255,255,.4);
+        color: #fff;
+    }
+}
+
+/* ════════════════════════════════════════════════════════
+   FLASH MESSAGES
+════════════════════════════════════════════════════════ */
+.flash-wrapper {
+    position: fixed;
+    top: 1.25rem;
+    right: 1.25rem;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+    max-width: 380px;
+    width: calc(100vw - 2.5rem);
+}
+.flash {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.875rem 1rem;
+    border-radius: 12px;
+    border: 1px solid transparent;
+    background: #fff;
+    box-shadow: 0 8px 32px rgba(0,0,0,.1), 0 2px 8px rgba(0,0,0,.06);
+    animation: flashIn .35s cubic-bezier(.16,1,.3,1);
+}
+.flash--success { border-color: rgba(34,197,94,.25); }
+.flash--success .flash-icon { color: #16a34a; }
+.flash--error   { border-color: rgba(239,68,68,.25); }
+.flash--error   .flash-icon { color: #dc2626; }
+.flash--info    { border-color: rgba(201,130,10,.25); }
+.flash--info    .flash-icon { color: var(--gold); }
+
+.flash-icon     { flex-shrink: 0; width: 20px; height: 20px; margin-top: 1px; }
+.flash-icon svg { width: 100%; height: 100%; }
+.flash-text     { flex: 1; font-size: .875rem; line-height: 1.55; color: var(--ink); }
+.flash-text p   { margin: 0; }
+.flash-text p + p { margin-top: .25rem; }
+.flash-close {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    font-size: 1.1rem;
+    line-height: 1;
+    color: var(--ink-muted);
+    cursor: pointer;
+    padding: 0;
+    margin-left: auto;
+    transition: color .15s;
+}
+.flash-close:hover { color: var(--ink); }
+
+/* ════════════════════════════════════════════════════════
+   SCROLLBAR (Chromium only)
+════════════════════════════════════════════════════════ */
+::-webkit-scrollbar       { width: 6px; }
+::-webkit-scrollbar-track { background: var(--ivory); }
+::-webkit-scrollbar-thumb { background: var(--ivory-3); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: var(--ink-muted); }
