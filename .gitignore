@@ -1,30 +1,73 @@
+# =========================
+# Dependencies
+# =========================
 /vendor/
-node_modules/
+/node_modules/
+
+# =========================
+# Environment files
+# =========================
+.env
+.env.backup
+.env.production
+
+# =========================
+# Logs
+# =========================
 npm-debug.log
 yarn-error.log
 
-# Laravel 4 specific
+# =========================
+# Laravel Storage
+# =========================
+/storage/*.key
+/storage/logs/*
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+/storage/pail
+
+# =========================
+# Laravel Public Storage
+# =========================
+/public/storage
+/public/hot
+/public/build
+
+# =========================
+# Laravel 4
+# =========================
 bootstrap/compiled.php
 app/storage/
 
-# Laravel 5 & Lumen specific
-public/storage
-public/hot
-
-# Laravel 5 & Lumen specific with changed public path
+# =========================
+# Laravel 5 & Lumen
+# =========================
 public_html/storage
 public_html/hot
 
-storage/*.key
-.env
+# =========================
+# Homestead
+# =========================
 Homestead.yaml
 Homestead.json
 /.vagrant
-.phpunit.result.cache
 
-/public/build
-/storage/pail
-.env.backup
-.env.production
-.phpactor.json
+# =========================
+# PHP / Composer
+# =========================
 auth.json
+.phpunit.result.cache
+.phpactor.json
+
+# =========================
+# OS Files
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# IDE
+# =========================
+.vscode/
+.idea/
